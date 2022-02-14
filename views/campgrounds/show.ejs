@@ -4,16 +4,14 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campground</title>
+    <title><%=camp.title %></title>
   </head>
   <body>
-    <h1>All campgrounds</h1>
+    <h1>Show details</h1>
     <ul>
-      <% for(let campground of campgrounds) {%>
-      <li>
-        <a href="/campgrounds/<%=campground._id%>"><%= campground.title%></a>
-      </li>
-      <% } %>
+      <li>The title: <%=camp.title %></li>
+      <li>The location: <%=camp.location %></li>
     </ul>
+    <a href="/campgrounds">Back to All list</a>
   </body>
 </html>

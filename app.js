@@ -37,6 +37,11 @@ app.get('/campgrounds', async (req, res) => {
     res.render('campgrounds/index', {campgrounds})
 })
 
+app.get('/campgrounds/:id', async (req, res) => {
+    const camp = await campground.findById(req.params.id)
+    res.render('campgrounds/show', {camp})
+})
+
 
 //making a server
 app.listen(3000, ()=> {
