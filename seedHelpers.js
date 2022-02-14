@@ -41,4 +41,5 @@ module.exports.places = [
     'Hunting Camp',
     'Cliffs',
     'Hollow'
+    
 ]

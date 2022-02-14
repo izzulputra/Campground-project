@@ -8090,7 +8090,7 @@ module.exports = [
         rank: "899",
         state: "Illinois",
     },
-    {
+   {
         city: "Morgan Hill",
         growth_from_2000_to_2013: "19.5%",
         latitude: 37.1305012,
