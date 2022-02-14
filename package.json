@@ -1,0 +1,23 @@
+{
+  "name": "campground-project",
+  "version": "1.0.0",
+  "description": "making an massive campground project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/izzulputra/Campground-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/izzulputra/Campground-project/issues"
+  },
+  "homepage": "https://github.com/izzulputra/Campground-project#readme",
+  "dependencies": {
+    "express": "^4.17.2"
+  }
+}
