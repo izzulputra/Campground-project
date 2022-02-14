@@ -21,6 +21,8 @@ const app = express(); // to be short
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views')) // we can call the views folder from anywhere
 
+app.use(express.urlencoded({extended:true})); // to parse JSON
+
 // Our Homepage
 app.get('/', (req,res) => {
     res.render('home') //from views folder
@@ -36,11 +38,24 @@ app.get('/campgrounds', async (req, res) => {
     const campgrounds = await campground.find({});
     res.render('campgrounds/index', {campgrounds})
 })
+//order is important!! dont give the new under :id
+app.get('/campgrounds/new', (req, res) => {
+    res.render('campgrounds/new')
+})
+
+app.post('/campgrounds', async (req,res) => {
+    const camp = new campground(req.body.campground) // its will work when the JSON file of the form is same like campground :{title: abc, location: abc}
+    await camp.save()
+    res.redirect(`/campgrounds/${camp._id}`); // to show what's gaoing on 
+});
+
 
 app.get('/campgrounds/:id', async (req, res) => {
     const camp = await campground.findById(req.params.id)
     res.render('campgrounds/show', {camp})
 })
+
+
 
 
 //making a server
