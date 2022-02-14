@@ -26,12 +26,18 @@ app.get('/', (req,res) => {
     res.render('home') //from views folder
 })
 
-app.get('/campground', async (req, res) => {
-    const camp = new campground({title: 'My Backyard', description: 'cheap camping'}) // call campground func to declarate a new model with new object
-    await camp.save(); // saved to database
-    res.send(camp);
+// app.get('/campground', async (req, res) => {
+//     const camp = new campground({title: 'My Backyard', description: 'cheap camping'}) // call campground func to declarate a new model with new object
+//     await camp.save(); // saved to database
+//     res.send(camp);
+// })
 
+app.get('/campgrounds', async (req, res) => {
+    const campgrounds = await campground.find({});
+    res.render('campgrounds/index', {campgrounds})
 })
+
+
 //making a server
 app.listen(3000, ()=> {
     console.log('serving on port 3000')

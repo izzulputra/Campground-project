@@ -1,3 +1,5 @@
+//sets to give early 50 data object to our database
+
 const mongoose = require('mongoose');
 const campground = require('../models/campground');
 const {places, descriptors} = require('./seedHelpers')
