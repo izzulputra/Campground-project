@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const campground = require('./models/campground');
+const methodOverride = require('method-override')
 
 
 mongoose.connect('mongodb://localhost:27017/camping', {
@@ -22,6 +23,7 @@ app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views')) // we can call the views folder from anywhere
 
 app.use(express.urlencoded({extended:true})); // to parse JSON
+app.use(methodOverride('_method'))
 
 // Our Homepage
 app.get('/', (req,res) => {
@@ -49,14 +51,29 @@ app.post('/campgrounds', async (req,res) => {
     res.redirect(`/campgrounds/${camp._id}`); // to show what's gaoing on 
 });
 
-
+//for showing an show page
 app.get('/campgrounds/:id', async (req, res) => {
     const camp = await campground.findById(req.params.id)
     res.render('campgrounds/show', {camp})
 })
 
+//for showing an edit page
+app.get('/campgrounds/:id/edit', async (req, res) => {
+    const camp = await campground.findById(req.params.id)
+    res.render('campgrounds/edit', {camp})
+})
 
+app.put('/campgrounds/:id', async (req, res) => {
+    const { id } = req.params;
+    const camp = await campground.findByIdAndUpdate(id, {...req.body.campground}) //use spread parameters, it will update inside the object
+    res.redirect(`/campgrounds/${camp._id}`)
+})
 
+app.delete('/campgrounds/:id', async (req, res) => {
+    const { id } = req.params;
+    const camp = await campground.findByIdAndDelete(id);
+    res.redirect('/campgrounds')
+})
 
 //making a server
 app.listen(3000, ()=> {

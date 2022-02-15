@@ -12,6 +12,12 @@
       <li>The title: <%=camp.title %></li>
       <li>The location: <%=camp.location %></li>
     </ul>
+    <a href="/campgrounds/<%=camp._id%>/edit">Edit Campground</a>
     <a href="/campgrounds">Back to All list</a>
+    <p>
+      <form action="/campgrounds/<%=camp._id%>?_method=DELETE" method="POST">
+      <button>DELETE</button>
+      </form>
+    </p>
   </body>
 </html>
