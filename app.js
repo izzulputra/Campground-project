@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
+const ejsMate =require('ejs-mate') // to layouting with ejs-mate
 const campground = require('./models/campground');
 const methodOverride = require('method-override')
 
@@ -19,6 +20,7 @@ db.once("open", () => {
 
 const app = express(); // to be short
 
+app.engine('ejs', ejsMate) // use to layouting the boilerplate
 app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views')) // we can call the views folder from anywhere
 
