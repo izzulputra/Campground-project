@@ -1,16 +1,14 @@
 <!-- to connecting the layout -->
 <%layout('layouts/boilerplate')%>
-    <h1>Show details</h1>
-    <ul>
-      <li>The title: <%=camp.title %></li>
-      <li>The location: <%=camp.location %></li>
-    </ul>
+      <h1><%=camp.title %></h1>
+      <h5 class="text-muted"><%=camp.location %></h5>
+      <h4>Price: $<%=camp.price %></h4>
     <img src="<%=camp.image%>" alt="">
     <p><%=camp.description%></p>
-    <a href="/campgrounds/<%=camp._id%>/edit">Edit Campground</a>
-    <a href="/campgrounds">Back to All list</a>
+    <a class="btn btn-info" href="/campgrounds/<%=camp._id%>/edit">Edit Campground</a>
+    <a class="btn btn-success" href="/campgrounds">Back to All list</a>
     <p>
       <form action="/campgrounds/<%=camp._id%>?_method=DELETE" method="POST">
-      <button>DELETE</button>
+      <button class="btn btn-danger">DELETE</button>
       </form>
     </p>
