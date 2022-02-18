@@ -1,14 +1,30 @@
 <!-- to connecting the layout -->
 <%layout('layouts/boilerplate')%>
-      <h1><%=camp.title %></h1>
-      <h5 class="text-muted"><%=camp.location %></h5>
-      <h4>Price: $<%=camp.price %></h4>
-    <img src="<%=camp.image%>" alt="">
-    <p><%=camp.description%></p>
-    <a class="btn btn-info" href="/campgrounds/<%=camp._id%>/edit">Edit Campground</a>
-    <a class="btn btn-success" href="/campgrounds">Back to All list</a>
-    <p>
-      <form action="/campgrounds/<%=camp._id%>?_method=DELETE" method="POST">
-      <button class="btn btn-danger">DELETE</button>
-      </form>
-    </p>
+<div class="row">
+  <div class="col-6 offset-3">
+    <div class="card">
+      <img src="<%=camp.image%>" class="card-img-top" alt="..." />
+      <div class="card-body">
+        <h5 class="card-title"><%=camp.title %></h5>
+        <p class="card-text"><%=camp.description%></p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item text-muted"><%=camp.location%></li>
+        <li class="list-group-item">$<%=camp.price%>/night</li>
+      </ul>
+      <div class="card-body">
+        <a class="btn btn-info" href="/campgrounds/<%=camp._id%>/edit">Edit</a>
+        <form
+          class="d-inline"
+          action="/campgrounds/<%=camp._id%>?_method=DELETE"
+          method="POST"
+        >
+          <button class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+    <div class="card-footer">
+      <a class="btn btn-success" href="/campgrounds">Back to All list</a>
+    </div>
+  </div>
+</div>
