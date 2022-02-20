@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const ejsMate =require('ejs-mate') // to layouting with ejs-mate
+const Joi = require('joi');
 const catchAsync = require('./utils/catchAsync') //wrap Async
 const ExpressError = require('./utils/ExpressError') //Express Error get the status dan message function
 const campground = require('./models/campground');
@@ -50,8 +51,25 @@ app.get('/campgrounds/new', (req, res) => {
 })
 
 app.post('/campgrounds', catchAsync (async (req,res) => { //use catch async wrapper function in utils
-    if(!req.body.campground) throw new ExpressError('Invalid campground Data', 400);
+    //if(!req.body.campground) throw new ExpressError('Invalid campground Data', 400);
     //its to prevent inject req.body.campground from postman
+    //using joi
+    const campgroundSchema = Joi.object({
+        campground: Joi.object({
+            title: Joi.string().required(),
+            price: Joi.number().required().min(0),
+            image: Joi.string().required(),
+            location: Joi.string().required(),
+            description: Joi.string().required()
+        }).required()
+    })
+    const  {error} = campgroundSchema.validate(req.body);
+    if(error) {
+        const msg =error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    }
+    // console.log(result)
+
     const camp = new campground(req.body.campground) // its will work when the JSON file of the form is same like campground :{title: abc, location: abc}
     await camp.save()
     res.redirect(`/campgrounds/${camp._id}`); // to show what's gaoing on 
@@ -93,7 +111,7 @@ app.use((err, req, res, next) => {
      //in folder views withouth pathing
 })
 
-//making a server
+//create a server
 app.listen(3000, ()=> {
     console.log('serving on port 3000')
 })
