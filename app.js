@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const ejsMate =require('ejs-mate') // to layouting with ejs-mate
+const catchAsync = require('./utils/catchAsync')
 const campground = require('./models/campground');
 const methodOverride = require('method-override')
 
@@ -47,34 +48,38 @@ app.get('/campgrounds/new', (req, res) => {
     res.render('campgrounds/new')
 })
 
-app.post('/campgrounds', async (req,res) => {
+app.post('/campgrounds', catchAsync (async (req,res) => { //use catch async wrapper function in utils
     const camp = new campground(req.body.campground) // its will work when the JSON file of the form is same like campground :{title: abc, location: abc}
     await camp.save()
     res.redirect(`/campgrounds/${camp._id}`); // to show what's gaoing on 
-});
+}));
 
 //for showing an show page
-app.get('/campgrounds/:id', async (req, res) => {
+app.get('/campgrounds/:id', catchAsync(async (req, res) => {
     const camp = await campground.findById(req.params.id)
     res.render('campgrounds/show', {camp})
-})
+}));
 
 //for showing an edit page
-app.get('/campgrounds/:id/edit', async (req, res) => {
+app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
     const camp = await campground.findById(req.params.id)
     res.render('campgrounds/edit', {camp})
-})
+}))
 
-app.put('/campgrounds/:id', async (req, res) => {
+app.put('/campgrounds/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
     const camp = await campground.findByIdAndUpdate(id, {...req.body.campground}) //use spread parameters, it will update inside the object
     res.redirect(`/campgrounds/${camp._id}`)
-})
+}));
 
-app.delete('/campgrounds/:id', async (req, res) => {
+app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
     const camp = await campground.findByIdAndDelete(id);
     res.redirect('/campgrounds')
+}))
+
+app.use((err, req, res, next) => {
+    res.send('Something went wrong!')
 })
 
 //making a server
