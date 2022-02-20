@@ -2,12 +2,21 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const ejsMate =require('ejs-mate') // to layouting with ejs-mate
-const Joi = require('joi');
+const {campgroundSchema} = require('./schema.js'); //import schema for joi in schema.js
 const catchAsync = require('./utils/catchAsync') //wrap Async
 const ExpressError = require('./utils/ExpressError') //Express Error get the status dan message function
 const campground = require('./models/campground');
 const methodOverride = require('method-override')
 
+const validateCampground = (req, res, next) =>{
+const  {error} = campgroundSchema.validate(req.body);
+    if(error) {
+        const msg =error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
+}
 
 mongoose.connect('mongodb://localhost:27017/camping', {
     useNewUrlParser: true, // version 6++ is no longer necessary
@@ -30,6 +39,7 @@ app.set('views', path.join(__dirname, 'views')) // we can call the views folder 
 app.use(express.urlencoded({extended:true})); // to parse JSON
 app.use(methodOverride('_method'))
 
+
 // Our Homepage
 app.get('/', (req,res) => {
     res.render('home') //from views folder
@@ -50,29 +60,12 @@ app.get('/campgrounds/new', (req, res) => {
     res.render('campgrounds/new')
 })
 
-app.post('/campgrounds', catchAsync (async (req,res) => { //use catch async wrapper function in utils
+app.post('/campgrounds',validateCampground, catchAsync (async (req,res) => { //use catch async wrapper function in utils
     //if(!req.body.campground) throw new ExpressError('Invalid campground Data', 400);
-    //its to prevent inject req.body.campground from postman
-    //using joi
-    const campgroundSchema = Joi.object({
-        campground: Joi.object({
-            title: Joi.string().required(),
-            price: Joi.number().required().min(0),
-            image: Joi.string().required(),
-            location: Joi.string().required(),
-            description: Joi.string().required()
-        }).required()
-    })
-    const  {error} = campgroundSchema.validate(req.body);
-    if(error) {
-        const msg =error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
-    }
-    // console.log(result)
 
     const camp = new campground(req.body.campground) // its will work when the JSON file of the form is same like campground :{title: abc, location: abc}
     await camp.save()
-    res.redirect(`/campgrounds/${camp._id}`); // to show what's gaoing on 
+    res.redirect(`/campgrounds/${camp._id}`); // to show what's going on 
 }));
 
 //for showing an show page
@@ -82,7 +75,7 @@ app.get('/campgrounds/:id', catchAsync(async (req, res) => {
 }));
 
 //for showing an edit page
-app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
+app.get('/campgrounds/:id/edit', validateCampground, catchAsync(async (req, res) => {
     const camp = await campground.findById(req.params.id)
     res.render('campgrounds/edit', {camp})
 }))
