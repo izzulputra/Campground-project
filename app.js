@@ -2,7 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const ejsMate =require('ejs-mate') // to layouting with ejs-mate
-const catchAsync = require('./utils/catchAsync')
+const catchAsync = require('./utils/catchAsync') //wrap Async
+const ExpressError = require('./utils/ExpressError') //Express Error get the status dan message function
 const campground = require('./models/campground');
 const methodOverride = require('method-override')
 
@@ -49,6 +50,8 @@ app.get('/campgrounds/new', (req, res) => {
 })
 
 app.post('/campgrounds', catchAsync (async (req,res) => { //use catch async wrapper function in utils
+    if(!req.body.campground) throw new ExpressError('Invalid campground Data', 400);
+    //its to prevent inject req.body.campground from postman
     const camp = new campground(req.body.campground) // its will work when the JSON file of the form is same like campground :{title: abc, location: abc}
     await camp.save()
     res.redirect(`/campgrounds/${camp._id}`); // to show what's gaoing on 
@@ -78,8 +81,16 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     res.redirect('/campgrounds')
 }))
 
+app.all('*',(res, req, next) => {
+    next(new ExpressError('Page not found!', 404))
+
+})
+
 app.use((err, req, res, next) => {
-    res.send('Something went wrong!')
+    const { statusCode = 500} = err;
+    if(!err.message) err.message = 'Something went wrong!'
+    res.status(statusCode).render('error', {err})// passing value of err to rendering page
+     //in folder views withouth pathing
 })
 
 //making a server
