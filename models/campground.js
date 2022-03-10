@@ -6,7 +6,13 @@ const CampgroundSchema = new Schema({
     image: String,
     price: Number,
     description: String,
-    location: String
+    location: String,
+    reviews: [ // menggunakan properti reviews untuk memanggil / menghubungkan antara 2 model
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Review' // referensi mengacu pada model/collection milik Review
+        }
+    ]
 });
 
 //making collection in dbs, which exported to app.js and linked to const camp in app js
