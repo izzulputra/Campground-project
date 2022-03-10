@@ -75,12 +75,12 @@ app.get('/campgrounds/:id', catchAsync(async (req, res) => {
 }));
 
 //for showing an edit page
-app.get('/campgrounds/:id/edit', validateCampground, catchAsync(async (req, res) => {
+app.get('/campgrounds/:id/edit', catchAsync(async (req, res) => {
     const camp = await campground.findById(req.params.id)
     res.render('campgrounds/edit', {camp})
 }))
 
-app.put('/campgrounds/:id', catchAsync(async (req, res) => {
+app.put('/campgrounds/:id',validateCampground, catchAsync(async (req, res) => {
     const { id } = req.params;
     const camp = await campground.findByIdAndUpdate(id, {...req.body.campground}) //use spread parameters, it will update inside the object
     res.redirect(`/campgrounds/${camp._id}`)
