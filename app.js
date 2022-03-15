@@ -2,10 +2,11 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const ejsMate =require('ejs-mate') // to layouting with ejs-mate
-const {campgroundSchema} = require('./schema.js'); //import schema for joi in schema.js
+const {campgroundSchema, reviewSchema} = require('./schema.js'); //import schema for joi in schema.js
 const catchAsync = require('./utils/catchAsync') //wrap Async
 const ExpressError = require('./utils/ExpressError') //Express Error get the status dan message function
 const campground = require('./models/campground');
+const Review = require('./models/review')
 const methodOverride = require('method-override')
 
 const validateCampground = (req, res, next) =>{
@@ -16,6 +17,17 @@ const  {error} = campgroundSchema.validate(req.body);
     } else {
         next();
     }
+}
+
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body);
+    if(error) {
+        const msg =error.details.map(el => el.message).join(',')
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
+
 }
 
 mongoose.connect('mongodb://localhost:27017/camping', {
@@ -90,6 +102,16 @@ app.delete('/campgrounds/:id', catchAsync(async (req, res) => {
     const { id } = req.params;
     const camp = await campground.findByIdAndDelete(id);
     res.redirect('/campgrounds')
+}))
+
+//To add path review campground
+app.post('/campgrounds/:id/reviews',validateReview, catchAsync(async(req,res)=> {
+    const camp = await campground.findById(req.params.id);
+    const review = new Review(req.body.review); // catch body of the POST body on show.ejs which the name is review
+    camp.reviews.push(review); //campground with includes that review and save the id of them on campground models
+    await review.save();
+    await camp.save();
+    res.redirect(`/campgrounds/${camp._id}`)
 }))
 
 app.all('*',(res, req, next) => {
