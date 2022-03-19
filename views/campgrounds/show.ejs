@@ -59,12 +59,19 @@
       </div>
       <button class="btn btn-success">Submit</button>
     </form>
+
     <form action="">
       <% for(review of camp.reviews) { %>
       <div class="card mb-3">
         <div class="card-body">
           <h5 class="card-title">rating: <%= review.rating %></h5>
           <p class="card-text">comment: <%= review.body %></p>
+          <form
+            action="/campgrounds/<%=camp._id%>/reviews/<%=review._id%>?_method=DELETE"
+            method="POST"
+          >
+            <button class="btn btn-sm btn-danger">Delete</button>
+          </form>
         </div>
       </div>
       <% } %>
